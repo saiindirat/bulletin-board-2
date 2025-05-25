@@ -1,50 +1,35 @@
 <div>
-  <div>
-    <h1>
-      <%= @the_board.name %>
-    </h1>
-  </div>
+  <h1><%= @the_board.name %></h1>
 </div>
 
 <hr>
 
-<h2>
-  Add a new post
-</h2>
+<% if user_signed_in? %>
+  <h2>Add a new post</h2>
 
-<form action="/insert_post" method="post">
-  <div>
-    <label for="title_box">
-      Title
-    </label>
+  <form action="/insert_post" method="post">
+    <div>
+      <label for="title_box">Title</label>
+      <input type="text" id="title_box" name="query_title">
+    </div>
 
-    <input type="text" id="title_box" name="query_title">
-  </div>
+    <div>
+      <label for="body_box">Body</label>
+      <textarea id="body_box" name="query_body" rows="3"></textarea>
+    </div>
 
-  <div>
-    <label for="body_box">
-      Body
-    </label>
+    <div>
+      <label for="expires_on_box">Expires on</label>
+      <input type="date" id="expires_on_box" name="query_expires_on">
+    </div>
 
-    <textarea id="body_box" name="query_body" rows="3"></textarea>
-  </div>
+    <input type="hidden" name="query_board_id" value="<%= @the_board.id %>">
 
-  <div>
-    <label for="expires_on_box">
-      Expires on
-    </label>
+    <button>Add post</button>
+  </form>
 
-    <input type="date" id="expires_on_box" name="query_expires_on">
-  </div>
-
-  <input type="hidden" id="board_id_box" name="query_board_id" value="<%= @the_board.id %>">
-
-  <button>
-    Add post
-  </button>
-</form>
-
-<hr>
+  <hr>
+<% end %>
 
 <h2>Active posts</h2>
 
@@ -54,14 +39,22 @@
     <th>Body</th>
     <th>Posted on</th>
     <th>Expires on</th>
+    <th>Created by</th>
+    <th></th>
   </tr>
 
   <% @active_posts.each do |a_post| %>
     <tr>
       <td><%= a_post.title %></td>
       <td><%= a_post.body %></td>
-      <td><%= a_post.created_at.strftime("%b %e, %Y") %></td>
-      <td><%= a_post.expires_on.strftime("%b %e, %Y") %></td>
+      <td><%= a_post.created_at.strftime("%b %d, %Y") %></td>
+      <td><%= a_post.expires_on.strftime("%b %d, %Y") %></td>
+      <td><%= a_post.user.email %></td>
+      <td>
+        <% if user_signed_in? && a_post.user_id == current_user.id %>
+          <a href="/delete_post/<%= a_post.id %>">Delete post</a>
+        <% end %>
+      </td>
     </tr>
   <% end %>
 </table>
@@ -74,14 +67,22 @@
     <th>Body</th>
     <th>Posted on</th>
     <th>Expired on</th>
+    <th>Created by</th>
+    <th></th>
   </tr>
 
   <% @expired_posts.each do |a_post| %>
     <tr>
       <td><%= a_post.title %></td>
       <td><%= a_post.body %></td>
-      <td><%= a_post.created_at.strftime("%b %e, %Y") %></td>
-      <td><%= a_post.expires_on.strftime("%b %e, %Y") %></td>
+      <td><%= a_post.created_at.strftime("%b %d, %Y") %></td>
+      <td><%= a_post.expires_on.strftime("%b %d, %Y") %></td>
+      <td><%= a_post.user.email %></td>
+      <td>
+        <% if user_signed_in? && a_post.user_id == current_user.id %>
+          <a href="/delete_post/<%= a_post.id %>">Delete post</a>
+        <% end %>
+      </td>
     </tr>
   <% end %>
 </table>
